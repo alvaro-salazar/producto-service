@@ -3,12 +3,17 @@ package co.edu.uceva.productoservice.controller;
 import co.edu.uceva.productoservice.model.entities.Producto;
 import co.edu.uceva.productoservice.model.service.IProductoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Clase controladora que expone los servicios REST de la entidad Producto
@@ -35,40 +40,158 @@ public class ProductoRestController {
         this.productoService = productoService;
     }
 
-    // Metodo que retorna todos los productos
+    /**
+     * Listar todos los productos.
+     */
     @GetMapping("/productos")
-    public List<Producto> getProductos(){
-        return productoService.findAll();
+    public ResponseEntity<?> getProductos() {
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            List<Producto> productos = productoService.findAll();
+
+            if (productos.isEmpty()) {
+                response.put("mensaje", "No hay productos en la base de datos.");
+                return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
+            }
+
+            return ResponseEntity.ok(productos);
+
+        } catch (DataAccessException e) {
+            response.put("mensaje", "Error al consultar la base de datos.");
+            response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
+
+    /**
+     * Listar productos con paginación.
+     */
     @GetMapping("/producto/page/{page}")
-    public Page<Producto> index(@PathVariable Integer page) {
+    public ResponseEntity<?> index(@PathVariable Integer page) {
+        Map<String, Object> response = new HashMap<>();
         Pageable pageable = PageRequest.of(page, 4);
-        return productoService.findAll(pageable);
+
+        try {
+            Page<Producto> productos = productoService.findAll(pageable);
+
+            if (productos.isEmpty()) {
+                response.put("mensaje", "No hay productos en la página solicitada.");
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
+
+            return ResponseEntity.ok(productos);
+
+        } catch (DataAccessException e) {
+            response.put("mensaje", "Error al consultar la base de datos.");
+            response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (IllegalArgumentException e) {
+            response.put("mensaje", "Número de página inválido.");
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
     }
 
-    // Metodo que retorna un producto por su id
+
+    /**
+     * Obtener un producto por su ID.
+     */
     @GetMapping("/productos/{id}")
-    public Producto getProductosById(@PathVariable("id") Long id) {
-        return productoService.findById(id);
+    public ResponseEntity<?> getProductosById(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            Producto producto = productoService.findById(id);
+
+            if (producto == null) {
+                response.put("mensaje", "El producto ID: " + id + " no existe en la base de datos.");
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
+
+            return ResponseEntity.ok(producto);
+
+        } catch (DataAccessException e) {
+            response.put("mensaje", "Error al consultar la base de datos.");
+            response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
-    // Metodo que guarda un producto
+
+    /**
+     * Crear un nuevo producto pasando el objeto en el cuerpo de la petición.
+     */
     @PostMapping("/productos")
-    public Producto save(@RequestBody Producto producto) {
-        return productoService.save(producto);
+    public ResponseEntity<?> save(@RequestBody Producto producto) {
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            // Guardar el producto en la base de datos
+            Producto nuevoProducto = productoService.save(producto);
+
+            response.put("mensaje", "El producto ha sido creado con éxito!");
+            response.put("producto", nuevoProducto);
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
+
+        } catch (DataAccessException e) {
+            response.put("mensaje", "Error al insertar el producto en la base de datos.");
+            response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
-    // Metodo que elimina un producto
+    /**
+     * Eliminar un producto pasando el objeto en el cuerpo de la petición.
+     */
     @DeleteMapping("/productos")
-    public void delete(@RequestBody Producto producto) {
-        productoService.delete(producto);
+    public ResponseEntity<?> delete(@RequestBody Producto producto) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Producto productoExistente = productoService.findById(producto.getId());
+            if (productoExistente == null) {
+                response.put("mensaje", "El producto ID: " + producto.getId() + " no existe en la base de datos.");
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
+
+            productoService.delete(producto);
+            response.put("mensaje", "El producto ha sido eliminado con éxito!");
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (DataAccessException e) {
+            response.put("mensaje", "Error al eliminar el producto de la base de datos.");
+            response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
-    // Metodo que actualiza un producto
+    /**
+     * Actualizar un producto pasando el objeto en el cuerpo de la petición.
+     * @param producto: Objeto Producto que se va a actualizar
+     */
     @PutMapping("/productos")
-    public Producto update(@RequestBody Producto producto) {
-        return productoService.update(producto);
+    public ResponseEntity<?> update(@RequestBody Producto producto) {
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            // Verificar si el producto existe antes de actualizar
+            if (productoService.findById(producto.getId()) == null) {
+                response.put("mensaje", "Error: No se pudo editar, el producto ID: " + producto.getId() + " no existe en la base de datos.");
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
+
+            // Guardar directamente el producto actualizado en la base de datos
+            Producto productoActualizado = productoService.save(producto);
+
+            response.put("mensaje", "El producto ha sido actualizado con éxito!");
+            response.put("producto", productoActualizado);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+
+        } catch (DataAccessException e) {
+            response.put("mensaje", "Error al actualizar el producto en la base de datos.");
+            response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
+
 
 }
