@@ -1,5 +1,7 @@
 package co.edu.uceva.productoservice.domain.service;
 
+import co.edu.uceva.productoservice.domain.exception.ProductoExistenteException;
+import co.edu.uceva.productoservice.domain.exception.ProductoNoEncontradoException;
 import co.edu.uceva.productoservice.domain.model.Producto;
 import co.edu.uceva.productoservice.domain.repository.IProductoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProductoServiceImpl implements IProductoService {
@@ -23,6 +26,9 @@ public class ProductoServiceImpl implements IProductoService {
     @Override
     @Transactional
     public Producto save(Producto producto) {
+        if (productoRepository.findByNombre((producto.getNombre())).isPresent()) {
+            throw new ProductoExistenteException(producto.getNombre());
+        }
         return productoRepository.save(producto);
     }
 
@@ -34,13 +40,16 @@ public class ProductoServiceImpl implements IProductoService {
 
     @Override
     @Transactional(readOnly = true)
-    public Producto findById(Long id) {
-        return productoRepository.findById(id).orElse(null);
+    public Optional<Producto> findById(Long id) {
+        return productoRepository.findById(id);
     }
 
     @Override
     @Transactional
     public Producto update(Producto producto) {
+        if (productoRepository.findById(producto.getId()).isEmpty()) {
+            throw new ProductoNoEncontradoException(producto.getId());
+        }
         return productoRepository.save(producto);
     }
 
