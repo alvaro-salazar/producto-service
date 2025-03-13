@@ -1,15 +1,11 @@
-package co.edu.uceva.productoservice.model.entities;
+package co.edu.uceva.productoservice.domain.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Digits;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.validator.constraints.NotEmpty;
 
 @Entity
 @Getter
@@ -33,4 +29,15 @@ public class Producto {
     @NotNull(message = "El precio es obligatorio")
     @Column(nullable = false)
     private Double precio;
+
+    @NotNull(message = "El stock no puede ser nulo")
+    @Min(value = 0, message = "El stock no puede ser negativo")
+    private Integer stock;
+
+    @Size(max = 100, message = "El nombre del archivo no puede exceder los 100 caracteres")
+    @Pattern(
+            regexp = "^[\\w,\\s-]+\\.(jpg|jpeg|png|gif|bmp|webp)$",
+            message = "El nombre del archivo debe ser válido y tener una extensión permitida: jpg, jpeg, png, gif, bmp, webp"
+    )
+    private String foto;
 }

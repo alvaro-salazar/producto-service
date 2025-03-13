@@ -1,7 +1,7 @@
-package co.edu.uceva.productoservice.controller;
+package co.edu.uceva.productoservice.delivery.rest;
 
-import co.edu.uceva.productoservice.model.entities.Producto;
-import co.edu.uceva.productoservice.model.service.IProductoService;
+import co.edu.uceva.productoservice.domain.model.Producto;
+import co.edu.uceva.productoservice.domain.service.IProductoService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;

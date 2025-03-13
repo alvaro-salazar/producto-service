@@ -1,6 +1,6 @@
-package co.edu.uceva.productoservice.model.repositories;
+package co.edu.uceva.productoservice.domain.repository;
 
-import co.edu.uceva.productoservice.model.entities.Producto;
+import co.edu.uceva.productoservice.domain.model.Producto;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**

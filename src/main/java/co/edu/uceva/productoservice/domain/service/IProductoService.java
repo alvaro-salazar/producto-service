@@ -1,6 +1,6 @@
-package co.edu.uceva.productoservice.model.service;
+package co.edu.uceva.productoservice.domain.service;
 
-import co.edu.uceva.productoservice.model.entities.Producto;
+import co.edu.uceva.productoservice.domain.model.Producto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
