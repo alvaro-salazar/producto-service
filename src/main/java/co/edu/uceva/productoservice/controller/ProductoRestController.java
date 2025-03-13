@@ -2,6 +2,7 @@ package co.edu.uceva.productoservice.controller;
 
 import co.edu.uceva.productoservice.model.entities.Producto;
 import co.edu.uceva.productoservice.model.service.IProductoService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
@@ -9,11 +10,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Clase controladora que expone los servicios REST de la entidad Producto
@@ -120,16 +123,24 @@ public class ProductoRestController {
 
 
     /**
-     * Crear un nuevo producto pasando el objeto en el cuerpo de la petición.
+     * Crear un nuevo producto con validaciones.
      */
     @PostMapping("/productos")
-    public ResponseEntity<?> save(@RequestBody Producto producto) {
+    public ResponseEntity<?> save(@Valid @RequestBody Producto producto, BindingResult result) {
         Map<String, Object> response = new HashMap<>();
 
-        try {
-            // Guardar el producto en la base de datos
-            Producto nuevoProducto = productoService.save(producto);
+        if (result.hasErrors()) {
+            List<String> errors = result.getFieldErrors()
+                    .stream()
+                    .map(err -> "El campo '" + err.getField() + "' " + err.getDefaultMessage())
+                    .collect(Collectors.toList());
 
+            response.put("errors", errors);
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+
+        try {
+            Producto nuevoProducto = productoService.save(producto);
             response.put("mensaje", "El producto ha sido creado con éxito!");
             response.put("producto", nuevoProducto);
             return new ResponseEntity<>(response, HttpStatus.CREATED);
@@ -165,23 +176,29 @@ public class ProductoRestController {
     }
 
     /**
-     * Actualizar un producto pasando el objeto en el cuerpo de la petición.
-     * @param producto: Objeto Producto que se va a actualizar
+     * Actualizar un producto con validaciones.
      */
     @PutMapping("/productos")
-    public ResponseEntity<?> update(@RequestBody Producto producto) {
+    public ResponseEntity<?> update(@Valid @RequestBody Producto producto, BindingResult result) {
         Map<String, Object> response = new HashMap<>();
 
+        if (result.hasErrors()) {
+            List<String> errors = result.getFieldErrors()
+                    .stream()
+                    .map(err -> "El campo '" + err.getField() + "' " + err.getDefaultMessage())
+                    .collect(Collectors.toList());
+
+            response.put("errors", errors);
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+
         try {
-            // Verificar si el producto existe antes de actualizar
             if (productoService.findById(producto.getId()) == null) {
                 response.put("mensaje", "Error: No se pudo editar, el producto ID: " + producto.getId() + " no existe en la base de datos.");
                 return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
             }
 
-            // Guardar directamente el producto actualizado en la base de datos
             Producto productoActualizado = productoService.save(producto);
-
             response.put("mensaje", "El producto ha sido actualizado con éxito!");
             response.put("producto", productoActualizado);
             return new ResponseEntity<>(response, HttpStatus.OK);
@@ -192,6 +209,4 @@ public class ProductoRestController {
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
-
 }
