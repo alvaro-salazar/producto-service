@@ -21,28 +21,33 @@ public class ProductoServiceImpl implements IProductoService {
     }
 
     @Override
+    @Transactional
     public Producto save(Producto producto) {
         return productoRepository.save(producto);
     }
 
     @Override
+    @Transactional
     public void delete(Producto producto) {
         productoRepository.delete(producto);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Producto findById(Long id) {
         return productoRepository.findById(id).orElse(null);
     }
 
     @Override
+    @Transactional
     public Producto update(Producto producto) {
         return productoRepository.save(producto);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Producto> findAll() {
-        return (List<Producto>) productoRepository.findAll();
+        return productoRepository.findAll();
     }
 
 
