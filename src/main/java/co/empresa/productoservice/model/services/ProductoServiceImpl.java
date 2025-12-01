@@ -2,6 +2,7 @@ package co.empresa.productoservice.model.services;
 
 import co.empresa.productoservice.model.entities.Producto;
 import co.empresa.productoservice.model.repositories.IProductoRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service; //allows use @Service
 import java.util.List;
 

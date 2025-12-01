@@ -7,7 +7,6 @@ import co.empresa.productoservice.domain.exception.ValidationException;
 import co.empresa.productoservice.domain.model.Producto;
 import co.empresa.productoservice.domain.service.IProductoService;
 import jakarta.validation.Valid;
-import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -21,8 +20,8 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/v1/producto-service")
-public class ProductoRestController {
+@RequestMapping("/api/v1/producto")
+public class ProductoController {
 
     // Declaramos como final el servicio para mejorar la inmutabilidad
     private final IProductoService productoService;
@@ -33,7 +32,7 @@ public class ProductoRestController {
     private static final String PRODUCTOS = "productos";
 
     // Inyección de dependencia del servicio que proporciona servicios de CRUD
-    public ProductoRestController(IProductoService productoService) {
+    public ProductoController(IProductoService productoService) {
         this.productoService = productoService;
     }
 
