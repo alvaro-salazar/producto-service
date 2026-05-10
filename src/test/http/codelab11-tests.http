@@ -1,0 +1,88 @@
+### Codelab 11 — producto-service HTTP Tests
+### Ejecutar con IntelliJ IDEA o VS Code REST Client
+### Requiere: token JWT de Keycloak (obtener con el paso siguiente)
+
+@base = http://localhost:8082/api/v1/producto-service
+@token_admin = Bearer REEMPLAZA_CON_TOKEN_ADMIN
+@token_user  = Bearer REEMPLAZA_CON_TOKEN_USER
+
+### 0. Obtener token ADMIN desde Keycloak
+POST http://localhost:8090/realms/curso-springboot/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=password&client_id=spring-boot-app&username=admin@fogata.com&password=admin123
+
+### 1. Listar todos los productos (requiere rol USER o ADMIN)
+GET {{base}}/productos
+Authorization: {{token_user}}
+
+### 2. Listar con paginación (página 0)
+GET {{base}}/productos/page/0
+Authorization: {{token_user}}
+
+### 3. Buscar producto por ID
+GET {{base}}/productos/1
+Authorization: {{token_user}}
+
+### 4. Crear producto (requiere rol ADMIN)
+POST {{base}}/productos
+Authorization: {{token_admin}}
+Content-Type: application/json
+
+{
+  "nombre": "Combo La Fogata",
+  "descripcion": "Hamburguesa + papas + limonada",
+  "precio": 28000.00,
+  "categoria": "combos"
+}
+
+### 5. Actualizar producto (requiere rol ADMIN)
+PUT {{base}}/productos/1
+Authorization: {{token_admin}}
+Content-Type: application/json
+
+{
+  "nombre": "Hamburguesa Clásica Premium",
+  "descripcion": "Carne de res 250g, queso doble, lechuga, tomate",
+  "precio": 14000.00,
+  "categoria": "hamburguesas"
+}
+
+### 6. Subir imagen de producto (requiere rol ADMIN)
+### Ajusta el campo 'imagen' con la ruta real de tu archivo
+POST {{base}}/productos/1/imagen
+Authorization: {{token_admin}}
+Content-Type: multipart/form-data; boundary=boundary
+
+--boundary
+Content-Disposition: form-data; name="imagen"; filename="hamburguesa.jpg"
+Content-Type: image/jpeg
+
+< ./hamburguesa.jpg
+--boundary--
+
+### 7. Eliminar producto (requiere rol ADMIN)
+DELETE {{base}}/productos/1
+Authorization: {{token_admin}}
+
+### 8. Info del servicio
+GET {{base}}/info
+Authorization: {{token_user}}
+
+### 9. Actuator health (sin autenticación)
+GET http://localhost:8083/actuator/health
+
+### 10. Error esperado: crear con rol USER (debe retornar 403)
+POST {{base}}/productos
+Authorization: {{token_user}}
+Content-Type: application/json
+
+{
+  "nombre": "No debería guardarse",
+  "precio": 1000.00,
+  "categoria": "test"
+}
+
+### 11. Error esperado: producto inexistente (debe retornar 404)
+GET {{base}}/productos/9999
+Authorization: {{token_user}}
