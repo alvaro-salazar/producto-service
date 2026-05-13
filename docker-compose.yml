@@ -45,11 +45,12 @@ services:
     environment:
       KC_BOOTSTRAP_ADMIN_USERNAME: admin
       KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+      KC_HTTP_PORT: 8090
     ports:
-      - "8090:8080"
+      - "8090:8090"
     command: start-dev
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8080/health/ready || exit 1"]
+      test: ["CMD-SHELL", "curl -f http://localhost:8090/health/ready || exit 1"]
       interval: 20s
       timeout: 10s
       retries: 10
@@ -71,7 +72,7 @@ services:
       MINIO_ACCESS_KEY: minioadmin
       MINIO_SECRET_KEY: minioadmin
       MINIO_BUCKET: productos
-      KEYCLOAK_ISSUER: http://keycloak:8080/realms/curso-springboot
+      KEYCLOAK_ISSUER: http://keycloak:8090/realms/curso-springboot
     ports:
       - "8082:8082"
       - "8083:8083"
