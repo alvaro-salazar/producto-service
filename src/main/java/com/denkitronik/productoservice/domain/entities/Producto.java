@@ -37,6 +37,9 @@ public class Producto {
     @Column(name = "imagen_url")
     private String imagenUrl;
 
+    @Column(nullable = false, columnDefinition = "integer default 0")
+    private Integer stock = 0;
+
     @Column(name = "create_at")
     @Temporal(TemporalType.DATE)
     private Date createAt;

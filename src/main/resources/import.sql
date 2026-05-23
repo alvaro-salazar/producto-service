@@ -1,8 +1,9 @@
-INSERT INTO productos (nombre, descripcion, precio, categoria, imagen_url, create_at) VALUES ('Hamburguesa Clásica', 'Carne de res 200g, lechuga, tomate, cebolla', 12500.00, 'hamburguesas', NULL, CURRENT_DATE);
-INSERT INTO productos (nombre, descripcion, precio, categoria, imagen_url, create_at) VALUES ('Hamburguesa BBQ', 'Carne de res 200g, queso cheddar, salsa BBQ, tocineta', 15000.00, 'hamburguesas', NULL, CURRENT_DATE);
-INSERT INTO productos (nombre, descripcion, precio, categoria, imagen_url, create_at) VALUES ('Pizza Margarita', 'Salsa de tomate, mozzarella, albahaca fresca', 22000.00, 'pizzas', NULL, CURRENT_DATE);
-INSERT INTO productos (nombre, descripcion, precio, categoria, imagen_url, create_at) VALUES ('Pizza Pepperoni', 'Salsa de tomate, mozzarella, pepperoni', 25000.00, 'pizzas', NULL, CURRENT_DATE);
-INSERT INTO productos (nombre, descripcion, precio, categoria, imagen_url, create_at) VALUES ('Ensalada César', 'Lechuga romana, crutones, queso parmesano, aderezo César', 10000.00, 'ensaladas', NULL, CURRENT_DATE);
-INSERT INTO productos (nombre, descripcion, precio, categoria, imagen_url, create_at) VALUES ('Limonada Natural', 'Limón fresco, azúcar, agua, hielo', 5000.00, 'bebidas', NULL, CURRENT_DATE);
-INSERT INTO productos (nombre, descripcion, precio, categoria, imagen_url, create_at) VALUES ('Agua Mineral 500ml', 'Agua mineral sin gas', 3000.00, 'bebidas', NULL, CURRENT_DATE);
-INSERT INTO productos (nombre, descripcion, precio, categoria, imagen_url, create_at) VALUES ('Papas a la francesa', 'Papas fritas crujientes con sal', 7000.00, 'acompanantes', NULL, CURRENT_DATE);
+INSERT INTO productos (nombre, descripcion, precio, categoria, imagen_url, create_at, stock) VALUES ('Hamburguesa Clásica', 'Carne de res 200g, lechuga, tomate, cebolla', 12500.00, 'hamburguesas', NULL, CURRENT_DATE, 10);
+INSERT INTO productos (nombre, descripcion, precio, categoria, imagen_url, create_at, stock) VALUES ('Hamburguesa BBQ', 'Carne de res 200g, queso cheddar, salsa BBQ, tocineta', 15000.00, 'hamburguesas', NULL, CURRENT_DATE, 10);
+INSERT INTO productos (nombre, descripcion, precio, categoria, imagen_url, create_at, stock) VALUES ('Pizza Margarita', 'Salsa de tomate, mozzarella, albahaca fresca', 22000.00, 'pizzas', NULL, CURRENT_DATE, 10);
+INSERT INTO productos (nombre, descripcion, precio, categoria, imagen_url, create_at, stock) VALUES ('Pizza Pepperoni', 'Salsa de tomate, mozzarella, pepperoni', 25000.00, 'pizzas', NULL, CURRENT_DATE, 10);
+INSERT INTO productos (nombre, descripcion, precio, categoria, imagen_url, create_at, stock) VALUES ('Ensalada César', 'Lechuga romana, crutones, queso parmesano, aderezo César', 10000.00, 'ensaladas', NULL, CURRENT_DATE, 10);
+INSERT INTO productos (nombre, descripcion, precio, categoria, imagen_url, create_at, stock) VALUES ('Limonada Natural', 'Limón fresco, azúcar, agua, hielo', 5000.00, 'bebidas', NULL, CURRENT_DATE, 10);
+INSERT INTO productos (nombre, descripcion, precio, categoria, imagen_url, create_at, stock) VALUES ('Agua Mineral 500ml', 'Agua mineral sin gas', 3000.00, 'bebidas', NULL, CURRENT_DATE, 10);
+INSERT INTO productos (nombre, descripcion, precio, categoria, imagen_url, create_at, stock) VALUES ('Papas a la francesa', 'Papas fritas crujientes con sal', 7000.00, 'acompanantes', NULL, CURRENT_DATE, 10);
+INSERT INTO productos (nombre, descripcion, precio, categoria, imagen_url, create_at, stock) VALUES ('Taza Desarrollador', 'Taza 400ml para desarrolladores', 18000.00, 'hogar', NULL, CURRENT_DATE, 1);
