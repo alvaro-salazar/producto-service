@@ -66,5 +66,5 @@ jobs:
           context: .
           push: true
           tags: |
-            denkitronik/producto-service:codelab-11
-            denkitronik/producto-service:latest
+            alvarosalazar/producto-service:codelab-11
+            alvarosalazar/producto-service:latest
